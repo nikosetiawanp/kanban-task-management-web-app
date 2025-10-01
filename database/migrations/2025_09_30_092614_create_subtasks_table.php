@@ -10,15 +10,17 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('boards', function (Blueprint $table) {
+        Schema::create('subtasks', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name', length: 30);
+            $table->string('title');
+            $table->boolean('completed');
             $table->timestamps();
 
-            // $table->integer(column: "user_id");
-            // $table->foreign('user_id')
-            //     ->references('id')
-            //     ->on('users');
+            $table->uuid(column: "task_id");
+            $table->foreign(columns: 'task_id')
+                ->references('id')
+                ->on('tasks')
+                ->onDelete('cascade');
         });
     }
 
@@ -27,6 +29,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('boards');
+        Schema::dropIfExists('subtasks');
     }
 };

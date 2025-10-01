@@ -10,15 +10,17 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('boards', function (Blueprint $table) {
+        Schema::create('statuses', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name', length: 30);
+            $table->string('name');
+            $table->string('color');
             $table->timestamps();
 
-            // $table->integer(column: "user_id");
-            // $table->foreign('user_id')
-            //     ->references('id')
-            //     ->on('users');
+            $table->uuid(column: "board_id");
+            $table->foreign(columns: 'board_id')
+                ->references('id')
+                ->on('boards')
+                ->onDelete('cascade');
         });
     }
 
@@ -27,6 +29,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('boards');
+        Schema::dropIfExists('statuses');
     }
 };

@@ -5,14 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
-class Board extends Model
+class Subtask extends Model
 {
     use HasUuids;
     protected $primaryKey = 'id';
-    protected $fillable = ['name'];
-
-    public function statuses()
-    {
-        return $this->hasMany(Status::class);
-    }
+    protected $fillable = [
+        'name',
+        'completed',
+        'task_id'
+    ];
 }

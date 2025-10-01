@@ -6,36 +6,45 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+use App\Models\Board;
 
-use Str;
+
 
 class BoardController extends Controller
 {
     public function index()
     {
-        $boards = DB::table("boards")->get();
+        $boards = Board::all(['id', 'title']);
 
-        return Inertia::render("Boards/Index", [
-            "boards" => $boards
+        return Inertia::share([
+            'boards' => fn() => $boards,
         ]);
+
+        // return Inertia::render(component: 'Boards/Index', ['boards' => $boards]);
     }
 
     public function show($id)
     {
-        $board = DB::table("boards")->where('id', $id)->first();
+        $board = $id
+            ? Board::with('statuses.tasks.subtasks')->find($id)
+            : Board::with('statuses.tasks.subtasks')->first();
+
         return Inertia::render('Boards/Show', [
-            'board' => $board
+            'board' => $board ?? [],
         ]);
     }
 
     public function store(Request $request)
     {
-        DB::table('boards')->insert([
-            'id' => Str::uuid(),
-            'name' => $request->name,
-            'created_at' => now(),
-            'updated_at' => now(),
+        $validatedData = $request->validate([
+            'name' => 'required|string',
+            'statuses' => 'sometimes|array',
+            'statuses.*.name' => 'required|string',
+            'statuses.*.color' => 'required|string|size:7',
         ]);
+
+        $board = Board::create(['name' => $validatedData['name']]);
+        $board->statuses()->createMany($validatedData['statuses']);
 
         return redirect('/boards');
     }
@@ -53,9 +62,7 @@ class BoardController extends Controller
 
     public function destroy($id)
     {
-        DB::table('boards')
-            ->where('id', $id)
-            ->delete();
+        Board::destroy(($id));
         return redirect('/boards');
     }
 }

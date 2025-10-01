@@ -1,12 +1,11 @@
-import { router, usePage } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 
 type BoardProps = {
     id: string;
     name: string;
 };
 
-export default function Index() {
-    const { boards } = usePage<{ boards: BoardProps[] }>().props;
+export default function Index({ boards }: { boards: BoardProps[] }) {
     return (
         <div className="flex">
             <Sidebar boards={boards} />
@@ -20,8 +19,11 @@ function Sidebar({ boards }: { boards: BoardProps[] }) {
             <span>ALL BOARDS ({boards.length})</span>
             {boards.map((board) => {
                 return (
-                    <div className="flex gap-4">
-                        <span>{board.name}</span>
+                    <div className="flex gap-4" key={board.id}>
+                        <Link href={`boards/${board.id}`}>
+                            <span>{board.id}</span>
+                            <span>{board.name}</span>
+                        </Link>
                         <button
                             onClick={() => router.delete('/boards/' + board.id)}
                         >
