@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
-import { Status } from '@/types/board';
-import { useForm } from '@inertiajs/react';
+import { Board, Status } from '@/types/board';
+import { router, useForm } from '@inertiajs/react';
 import { Calendar, X } from 'lucide-react';
 import { Button } from './ui/button';
 import {
@@ -13,14 +13,19 @@ import {
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 
-export default function TaskForm() {
-    const { data, setData, post, processing, errors, reset } = useForm<{
+export default function BoardForm({
+    mode,
+    board,
+}: {
+    mode: 'create' | 'edit';
+    board?: Board;
+}) {
+    const emptyData = { name: '', statuses: [] };
+
+    const { data, setData, post, processing, errors, reset, put } = useForm<{
         name: string;
         statuses: Status[];
-    }>({
-        name: '',
-        statuses: [],
-    });
+    }>(board || emptyData);
 
     const addStatus = () => {
         const newStatus: Status = { name: '', color: '#000000' };
@@ -34,19 +39,33 @@ export default function TaskForm() {
     };
 
     const submit = () => {
-        post('/boards');
+        console.log(data);
+
+        mode === 'create' && router.post('/boards', data);
+        mode === 'edit' && router.put('/boards/' + board?.id, data);
     };
 
     return (
-        <Dialog>
-            <DialogTrigger>
-                <Button>
-                    <Calendar />+ Create New Board
-                </Button>
-            </DialogTrigger>
+        <Dialog
+            key={mode === 'edit' ? board?.id : 'create'}
+            onOpenChange={() => reset()}
+        >
+            {mode === 'create' && (
+                <DialogTrigger>
+                    <Button>
+                        <Calendar />+ Create New Board
+                    </Button>
+                </DialogTrigger>
+            )}
+
+            {mode === 'edit' && <DialogTrigger>Edit Board</DialogTrigger>}
+
             <DialogContent>
                 <DialogHeader className="mb-4">
-                    <DialogTitle>Add New Board</DialogTitle>
+                    <DialogTitle>
+                        {mode === 'create' && 'Add New Board'}
+                        {mode === 'edit' && 'Edit Board'}
+                    </DialogTitle>
                 </DialogHeader>
 
                 <form
@@ -57,7 +76,7 @@ export default function TaskForm() {
                     }}
                 >
                     <div className="flex flex-col gap-2">
-                        <Label>Name</Label>
+                        <Label>Board Name</Label>
                         <Input
                             className={cn(errors?.name && 'border-destructive')}
                             value={data.name}
@@ -103,7 +122,10 @@ export default function TaskForm() {
                         + Add New Column
                     </Button>
 
-                    <Button type="submit">Create Board</Button>
+                    <Button type="submit">
+                        {mode === 'create' && 'Create Board'}
+                        {mode === 'edit' && 'Save Changes'}
+                    </Button>
                 </form>
             </DialogContent>
         </Dialog>

@@ -49,12 +49,7 @@ export default function AppSidebar({ board }: { board: Board }) {
                                 );
                             })}
                             <SidebarMenuItem>
-                                <BoardForm />
-                                {/* <SidebarMenuButton
-                                    onClick={() => createNewBoard()}
-                                >
-                                    <Calendar />+ Create New Board
-                                </SidebarMenuButton> */}
+                                <BoardForm mode={'create'} />
                             </SidebarMenuItem>
                         </SidebarMenu>
                     </SidebarGroupContent>

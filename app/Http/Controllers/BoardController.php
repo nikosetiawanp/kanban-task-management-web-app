@@ -7,8 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\Board;
-
-
+use App\Models\Status;
+use Illuminate\Support\Arr;
 
 class BoardController extends Controller
 {
@@ -49,16 +49,44 @@ class BoardController extends Controller
         return redirect('/boards');
     }
 
+
     public function update(Request $request)
     {
-        DB::table('boards')
-            ->where('id', $request->id)
-            ->update([
-                'name' => $request->name,
-                'updated_at' => now()
-            ]);
-        return redirect('/boards');
+        $board = Board::with('statuses')->find($request["id"]);
+        $originalStatuses = $board->statuses->toArray();
+
+        $updatedStatuses = $request["statuses"];
+        $cleanStatuses = array_map(
+            fn($status)  => Arr::only($status, ['id', 'name', 'color', 'board_id']),
+            $updatedStatuses
+        );
+
+        $statusesWithoutId = array_filter($cleanStatuses, function ($status) {
+            return !isset($status['id']) || empty($status['id']);
+        });
+        $statusesWithId = array_filter($cleanStatuses, function ($status) {
+            return isset($status['id']) && !empty($status['id']);
+        });
+
+        $originalIds = array_column($originalStatuses, 'id');
+        $updatedIds = array_column($statusesWithId, 'id');
+        $deletedIds = array_diff($originalIds, $updatedIds);
+
+
+        // Bulk Update
+        Status::upsert(
+            $statusesWithId,
+            ['id'],
+            ['name', 'color']
+        );
+
+        //  Bulk insert
+        $board->statuses()->createMany($statusesWithoutId);
+
+        // Bulk Delete
+        Status::whereIn('id', $deletedIds)->delete();
     }
+
 
     public function destroy($id)
     {
