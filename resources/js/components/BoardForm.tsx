@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { Board, Status } from '@/types/board';
-import { router, useForm } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
 import { Calendar, X } from 'lucide-react';
 import { Button } from './ui/button';
 import {
@@ -39,10 +39,8 @@ export default function BoardForm({
     };
 
     const submit = () => {
-        console.log(data);
-
-        mode === 'create' && router.post('/boards', data);
-        mode === 'edit' && router.put('/boards/' + board?.id, data);
+        mode === 'create' && post('/boards');
+        mode === 'edit' && put('/boards/' + board?.id);
     };
 
     return (
@@ -76,13 +74,16 @@ export default function BoardForm({
                     }}
                 >
                     <div className="flex flex-col gap-2">
-                        <Label>Board Name</Label>
+                        <Label
+                            className={cn(errors?.name && 'text-destructive')}
+                        >
+                            Board Name
+                        </Label>
                         <Input
                             className={cn(errors?.name && 'border-destructive')}
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
                         />
-                        {errors?.name && <span>{errors.name}</span>}
                     </div>
 
                     <div className="flex flex-col gap-2">
@@ -94,6 +95,10 @@ export default function BoardForm({
                                     className="flex items-center gap-2"
                                 >
                                     <Input
+                                        className={cn(
+                                            errors[`statuses.${index}.name`] &&
+                                                'border-destructive',
+                                        )}
                                         value={status.name}
                                         onChange={(e) =>
                                             setData(
@@ -107,6 +112,7 @@ export default function BoardForm({
                                         size="icon"
                                         className="size-8"
                                         onClick={() => removeStatus(index)}
+                                        type="button"
                                     >
                                         <X />
                                     </Button>

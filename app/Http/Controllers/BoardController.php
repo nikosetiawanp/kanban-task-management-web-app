@@ -49,44 +49,56 @@ class BoardController extends Controller
         return redirect('/boards');
     }
 
-
     public function update(Request $request)
     {
-        $board = Board::with('statuses')->find($request["id"]);
-        $originalStatuses = $board->statuses->toArray();
+        $validated =  $request->validate([
+            "id" => "required",
+            'name' => 'required|string',
+            "statuses" => "sometimes|array",
+            'statuses.*.name' => 'required|string',
+            'statuses.*.color' => 'required|string|size:7',
+        ]);
 
-        $updatedStatuses = $request["statuses"];
-        $cleanStatuses = array_map(
-            fn($status)  => Arr::only($status, ['id', 'name', 'color', 'board_id']),
-            $updatedStatuses
+        $board = Board::with('statuses')->find($validated["id"]);
+        $originalStatuses = $board->statuses;
+
+        $updatedStatuses = collect($validated["statuses"]);
+
+        $cleanStatuses = $updatedStatuses->map(
+            fn($status) => Arr::only($status, ['id', 'name', 'color'])
         );
 
-        $statusesWithoutId = array_filter($cleanStatuses, function ($status) {
-            return !isset($status['id']) || empty($status['id']);
-        });
-        $statusesWithId = array_filter($cleanStatuses, function ($status) {
-            return isset($status['id']) && !empty($status['id']);
-        });
+        $statusesWithoutId = $cleanStatuses->filter(
+            fn($status) => blank($status['id'] ?? null)
+        );
 
-        $originalIds = array_column($originalStatuses, 'id');
-        $updatedIds = array_column($statusesWithId, 'id');
-        $deletedIds = array_diff($originalIds, $updatedIds);
+        $statusesWithId = $cleanStatuses->filter(
+            fn($status) => filled($status['id'] ?? null)
+        );
+
+        $originalIds = $originalStatuses->pluck('id');
+        $updatedIds = $statusesWithId->pluck('id');
+        $deletedIds = $originalIds->diff($updatedIds);
 
 
-        // Bulk Update
+        // Update board
+        $board->name = $validated["name"];
+        $board->save();
+
+        // Bulk update status
         Status::upsert(
-            $statusesWithId,
+            $statusesWithId->toArray(),
             ['id'],
             ['name', 'color']
         );
 
-        //  Bulk insert
-        $board->statuses()->createMany($statusesWithoutId);
+        // Bulk insert
+        $board->statuses()->createMany($statusesWithoutId->toArray());
 
-        // Bulk Delete
+        // Bulk delete
         Status::whereIn('id', $deletedIds)->delete();
+        return redirect('/boards');
     }
-
 
     public function destroy($id)
     {
