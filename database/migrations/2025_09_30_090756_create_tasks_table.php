@@ -21,9 +21,6 @@ return new class extends Migration {
                 ->references('id')
                 ->on('statuses')
                 ->onDelete('cascade');
-
-
-
         });
     }
 

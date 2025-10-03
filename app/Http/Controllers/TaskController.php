@@ -20,23 +20,22 @@ class TaskController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string',
-            'description'  => 'nullable|string',
+            'description'  => 'required|string',
             'statusId' => 'required|uuid',
             'subtasks' => 'sometimes|array',
-            'subtasks.*.name' => 'required_with:subtasks|string',
+            'subtasks.*.name' => 'required|string',
             'subtasks.*.completed' => 'sometimes|boolean'
         ]);
 
+        // Create task
         $task = Task::create([
             'title' => $validated['title'],
             'description' => $validated['description'],
             'status_id' => $validated['statusId'],
         ]);
 
-
-        $task->subtasks()->createMany($validated['subtasks']);
-
-        return redirect('/tasks');
+        // Create subtasks
+        $task->subtasks()->createMany($validated["subtasks"]);
     }
 
     public function update(Request $request) {}

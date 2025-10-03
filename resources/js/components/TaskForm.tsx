@@ -22,7 +22,7 @@ import {
 import { Textarea } from './ui/textarea';
 
 export default function TaskForm({ board }: { board: Board }) {
-    const { data, setData, post, errors } = useForm<{
+    const { data, setData, post, errors, reset } = useForm<{
         title: string;
         description: string;
         subtasks: Subtask[];
@@ -47,11 +47,10 @@ export default function TaskForm({ board }: { board: Board }) {
 
     const submit = () => {
         post('/tasks');
-        console.log(data);
     };
 
     return (
-        <Dialog>
+        <Dialog onOpenChange={() => reset()}>
             <DialogTrigger disabled={board?.statuses?.length <= 0}>
                 <Button disabled={board?.statuses?.length <= 0}>
                     + Add new task
@@ -85,7 +84,10 @@ export default function TaskForm({ board }: { board: Board }) {
                             onChange={(e) =>
                                 setData('description', e.target.value)
                             }
-                            className="min-h-[120px] resize-none"
+                            className={cn(
+                                'min-h-[120px] resize-none',
+                                errors.description && 'border-destructive',
+                            )}
                             placeholder="e.g. It’s always good to take a break. This 15 minute break will recharge the batteries a little."
                         />
                     </div>
