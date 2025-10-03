@@ -28,7 +28,11 @@ export default function BoardForm({
     }>(board || emptyData);
 
     const addStatus = () => {
-        const newStatus: Status = { name: '', color: '#000000' };
+        const newStatus: Status = {
+            id: '',
+            name: '',
+            color: '#000000',
+        };
         setData('statuses', [...data?.statuses, newStatus]);
     };
     const removeStatus = (index: number) => {
@@ -39,8 +43,10 @@ export default function BoardForm({
     };
 
     const submit = () => {
+        console.log();
+
         mode === 'create' && post('/boards');
-        mode === 'edit' && put('/boards/' + board?.id);
+        mode === 'edit' && put(`/boards/${board?.id}`);
     };
 
     return (

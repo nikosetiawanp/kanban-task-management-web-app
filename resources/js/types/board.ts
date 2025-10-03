@@ -9,6 +9,7 @@ export type Task = {
     title: string;
     description: string;
     subtasks: Subtask[];
+    statusId: string;
 };
 
 export type Status = {
@@ -22,4 +23,5 @@ export type Board = {
     id: string;
     name: string;
     statuses: Status[];
+    boardId?: string;
 };

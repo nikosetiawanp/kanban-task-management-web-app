@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\StatusController;
+use App\Http\Controllers\SubtaskController;
+use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -22,22 +24,19 @@ Route::post('/boards', [BoardController::class, 'store']);
 Route::put('/boards/{id}', [BoardController::class, 'update']);
 Route::delete('/boards/{id}', [BoardController::class, 'destroy']);
 
-// Statuses
-Route::post('/boards/{board}/statuses/many', [StatusController::class, 'storeMany']);
-
 // Tasks
-Route::get('/tasks', action: [BoardController::class, 'index']);
-Route::get('/tasks/{id}', [BoardController::class, 'show']);
-Route::post('/tasks', [BoardController::class, 'store']);
-Route::put('/tasks/{id}', [BoardController::class, 'update']);
-Route::delete('/tasks/{id}', [BoardController::class, 'destroy']);
+Route::get('/tasks', action: [TaskController::class, 'index']);
+Route::get('/tasks/{id}', [TaskController::class, 'show']);
+Route::post('/tasks', [TaskController::class, 'store']);
+Route::put('/tasks/{id}', [TaskController::class, 'update']);
+Route::delete('/tasks/{id}', [TaskController::class, 'destroy']);
 
 // Subtasks
-Route::get('/subtasks', [BoardController::class, 'index']);
-Route::get('/subtasks/{id}', [BoardController::class, 'show']);
-Route::post('/subtasks', [BoardController::class, 'store']);
-Route::put('/subtasks/{id}', [BoardController::class, 'update']);
-Route::delete('/subtasks/{id}', [BoardController::class, 'destroy']);
+Route::get('/subtasks', [SubtaskController::class, 'index']);
+Route::get('/subtasks/{id}', [SubtaskController::class, 'show']);
+Route::post('/subtasks', [SubtaskController::class, 'store']);
+Route::put('/subtasks/{id}', [SubtaskController::class, 'update']);
+Route::delete('/subtasks/{id}', [SubtaskController::class, 'destroy']);
 
 
 

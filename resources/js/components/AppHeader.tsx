@@ -26,7 +26,8 @@ export default function AppHeader({ board }: { board: Board }) {
     return (
         <header className="flex h-[100px] w-full items-center gap-4 border-b bg-background p-4">
             <span className="mr-auto">{board.name}</span>
-            <TaskForm />
+            <TaskForm board={board} />
+
             {/* <Button className="ml-auto">+Add New Task</Button> */}
 
             <DropdownMenu>

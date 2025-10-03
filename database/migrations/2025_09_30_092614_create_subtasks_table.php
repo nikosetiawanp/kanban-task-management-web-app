@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('subtasks', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('title');
+            $table->string('name');
             $table->boolean('completed');
             $table->timestamps();
 
