@@ -1,5 +1,6 @@
 // resources/js/types/board.ts
 export type Subtask = {
+    id?: string;
     name: string;
     completed: boolean;
 };
@@ -9,7 +10,7 @@ export type Task = {
     title: string;
     description: string;
     subtasks: Subtask[];
-    statusId: string;
+    statusId?: string;
 };
 
 export type Status = {

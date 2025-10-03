@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { Board, Status } from '@/types/board';
 import { useForm } from '@inertiajs/react';
 import { Calendar, X } from 'lucide-react';
+import { useState } from 'react';
 import { Button } from './ui/button';
 import {
     Dialog,
@@ -43,16 +44,38 @@ export default function BoardForm({
     };
 
     const submit = () => {
-        console.log();
-
-        mode === 'create' && post('/boards');
-        mode === 'edit' && put(`/boards/${board?.id}`);
+        mode === 'create' &&
+            post('/boards', {
+                onSuccess: () => {
+                    setOpen(false);
+                    reset();
+                },
+                onError: (errors) => {
+                    console.log(errors);
+                },
+            });
+        mode === 'edit' &&
+            put(`/boards/${board?.id}`, {
+                onSuccess: () => {
+                    setOpen(false);
+                    reset();
+                },
+                onError: (errors) => {
+                    console.log(errors);
+                },
+            });
     };
+
+    const [open, setOpen] = useState(false);
 
     return (
         <Dialog
             key={mode === 'edit' ? board?.id : 'create'}
-            onOpenChange={() => reset()}
+            open={open}
+            onOpenChange={() => {
+                reset();
+                setOpen(!open);
+            }}
         >
             {mode === 'create' && (
                 <DialogTrigger>

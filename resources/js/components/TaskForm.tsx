@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { Board, Subtask } from '@/types/board';
 import { useForm } from '@inertiajs/react';
 import { X } from 'lucide-react';
+import { useState } from 'react';
 import { Button } from './ui/button';
 import {
     Dialog,
@@ -46,11 +47,27 @@ export default function TaskForm({ board }: { board: Board }) {
     };
 
     const submit = () => {
-        post('/tasks');
+        post('/tasks', {
+            onSuccess: () => {
+                setOpen(false);
+                reset();
+            },
+            onError: (errors) => {
+                console.log(errors);
+            },
+        });
     };
 
+    const [open, setOpen] = useState(false);
+
     return (
-        <Dialog onOpenChange={() => reset()}>
+        <Dialog
+            open={open}
+            onOpenChange={() => {
+                setOpen(!open);
+                reset();
+            }}
+        >
             <DialogTrigger disabled={board?.statuses?.length <= 0}>
                 <Button disabled={board?.statuses?.length <= 0}>
                     + Add new task
@@ -165,7 +182,7 @@ export default function TaskForm({ board }: { board: Board }) {
                         </SelectContent>
                     </Select>
 
-                    <Button>Create Task</Button>
+                    <Button type="submit">Create Task</Button>
                 </form>
             </DialogContent>
         </Dialog>

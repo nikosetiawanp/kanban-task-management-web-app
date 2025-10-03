@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Status;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -38,7 +39,25 @@ class TaskController extends Controller
         $task->subtasks()->createMany($validated["subtasks"]);
     }
 
-    public function update(Request $request) {}
+    public function update(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|uuid',
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'statusId' => 'required|uuid',
+        ]);
 
-    public function destroy($id) {}
+        Task::find($validated["id"])->update([
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'status_id' => $validated['statusId'],
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        Task::destroy(($id));
+        return redirect('/boards');
+    }
 }
