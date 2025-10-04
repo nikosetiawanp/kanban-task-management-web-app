@@ -37,13 +37,9 @@ export default function AppHeader({ board }: { board: Board }) {
                     </Button>
                 </DropdownMenuTrigger>
 
-                <DropdownMenuContent>
-                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                        <BoardForm mode={'edit'} board={board} />
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                        <DeleteBoard board={board} />
-                    </DropdownMenuItem>
+                <DropdownMenuContent className="flex flex-col">
+                    <BoardForm mode={'edit'} board={board} />
+                    <DeleteBoard board={board} />
                 </DropdownMenuContent>
             </DropdownMenu>
         </header>
@@ -53,7 +49,11 @@ export default function AppHeader({ board }: { board: Board }) {
 function DeleteBoard({ board }: { board: Board }) {
     return (
         <AlertDialog>
-            <AlertDialogTrigger>Delete Board</AlertDialogTrigger>
+            <AlertDialogTrigger>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    Delete Board
+                </DropdownMenuItem>
+            </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle className="text-destructive">

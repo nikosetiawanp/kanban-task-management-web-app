@@ -11,6 +11,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from './ui/dialog';
+import { DropdownMenuItem } from './ui/dropdown-menu';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 
@@ -85,7 +86,13 @@ export default function BoardForm({
                 </DialogTrigger>
             )}
 
-            {mode === 'edit' && <DialogTrigger>Edit Board</DialogTrigger>}
+            {mode === 'edit' && (
+                <DialogTrigger>
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                        Edit Board
+                    </DropdownMenuItem>
+                </DialogTrigger>
+            )}
 
             <DialogContent>
                 <DialogHeader className="mb-4">

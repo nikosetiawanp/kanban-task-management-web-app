@@ -11,6 +11,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from './ui/dialog';
+import { DropdownMenuItem } from './ui/dropdown-menu';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import {
@@ -110,7 +111,13 @@ export default function TaskForm({
                     </Button>
                 </DialogTrigger>
             )}
-            {mode === 'edit' && <DialogTrigger>Edit task</DialogTrigger>}
+            {mode === 'edit' && (
+                <DialogTrigger>
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                        Edit Task
+                    </DropdownMenuItem>
+                </DialogTrigger>
+            )}
             <DialogContent>
                 <DialogHeader className="mb-4">
                     <DialogTitle>

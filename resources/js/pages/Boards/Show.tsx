@@ -147,21 +147,14 @@ function TaskCard({
                                     <EllipsisVertical />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                                <DropdownMenuItem
-                                    onClick={(e) => e.preventDefault()}
-                                >
-                                    <TaskForm
-                                        mode={'edit'}
-                                        board={board}
-                                        task={task}
-                                    />
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={(e) => e.preventDefault()}
-                                >
-                                    <DeleteTask task={task} />
-                                </DropdownMenuItem>
+                            <DropdownMenuContent className="flex flex-col">
+                                <TaskForm
+                                    mode={'edit'}
+                                    board={board}
+                                    task={task}
+                                />
+
+                                <DeleteTask task={task} />
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
@@ -236,7 +229,11 @@ function TaskCard({
 function DeleteTask({ task }: { task: Task }) {
     return (
         <AlertDialog>
-            <AlertDialogTrigger>Delete Task</AlertDialogTrigger>
+            <AlertDialogTrigger>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    Delete Task
+                </DropdownMenuItem>
+            </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle className="text-destructive">
