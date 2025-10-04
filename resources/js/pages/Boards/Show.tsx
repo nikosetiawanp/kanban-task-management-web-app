@@ -1,5 +1,6 @@
 import AppHeader from '@/components/AppHeader';
 import AppSidebar from '@/components/AppSidebar';
+import TaskForm from '@/components/TaskForm';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -81,6 +82,7 @@ function Column({ status, board }: { status: Status; board: Board }) {
                 return (
                     <TaskCard
                         key={task.id}
+                        board={board}
                         task={task}
                         status={status}
                         statuses={board.statuses}
@@ -92,10 +94,12 @@ function Column({ status, board }: { status: Status; board: Board }) {
 }
 
 function TaskCard({
+    board,
     task,
     status,
     statuses,
 }: {
+    board: Board;
     task: Task;
     status: Status;
     statuses: Status[];
@@ -144,7 +148,15 @@ function TaskCard({
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
-                                <DropdownMenuItem>Edit Task</DropdownMenuItem>
+                                <DropdownMenuItem
+                                    onClick={(e) => e.preventDefault()}
+                                >
+                                    <TaskForm
+                                        mode={'edit'}
+                                        board={board}
+                                        task={task}
+                                    />
+                                </DropdownMenuItem>
                                 <DropdownMenuItem
                                     onClick={(e) => e.preventDefault()}
                                 >
@@ -163,7 +175,16 @@ function TaskCard({
                     </span>
                     {task.subtasks.map((subtask) => {
                         return (
-                            <Card className="flex items-center justify-start gap-2 p-3">
+                            <Card
+                                className="flex items-center justify-start gap-2 p-3 hover:cursor-pointer"
+                                onClick={() =>
+                                    router.put(`/subtasks/${subtask.id}`, {
+                                        id: subtask.id,
+                                        name: subtask.name,
+                                        completed: !subtask.completed,
+                                    })
+                                }
+                            >
                                 <div className="flex w-full items-center justify-start gap-4">
                                     <Checkbox checked={subtask.completed} />
                                     <span
@@ -189,6 +210,7 @@ function TaskCard({
                             title: task.title,
                             description: task.description,
                             statusId: value,
+                            subtasks: task.subtasks,
                         });
                     }}
                 >
@@ -206,33 +228,6 @@ function TaskCard({
                         ))}
                     </SelectContent>
                 </Select>
-
-                {/* <Select
-                    defaultValue={task.statusId}
-                    value={task.statusId}
-                    onValueChange={(value) => {
-                        router.put(`/tasks/${task.id}`, {
-                            id: task.id,
-                            title: task.title,
-                            description: task.description,
-                            statusId: value,
-                        });
-                    }}
-                >
-                    <div className="flex flex-col gap-2">
-                        <Label>Status</Label>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select status" />
-                        </SelectTrigger>
-                    </div>
-                    <SelectContent>
-                        {statuses?.map((status) => (
-                            <SelectItem key={status.id} value={status.id}>
-                                {status.name}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select> */}
             </DialogContent>
         </Dialog>
     );

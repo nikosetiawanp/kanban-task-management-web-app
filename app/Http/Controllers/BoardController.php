@@ -62,10 +62,11 @@ class BoardController extends Controller
             "name" => $request["name"],
         ]);
 
-        // Delete status
         $originalIds = $board->statuses()->pluck('id')->toArray();
         $requestIds = array_column((array_filter($validated["statuses"], fn($status) => !empty($status["id"]))), 'id');
         $deletedIds = array_diff($originalIds, $requestIds);
+
+        // Delete statuses
         Status::whereIn('id', $deletedIds)->delete();
 
         // Update statuses

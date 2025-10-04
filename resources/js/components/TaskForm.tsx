@@ -1,8 +1,8 @@
 import { cn } from '@/lib/utils';
-import { Board, Subtask } from '@/types/board';
+import { Board, Subtask, Task } from '@/types/board';
 import { useForm } from '@inertiajs/react';
 import { X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import {
     Dialog,
@@ -22,43 +22,78 @@ import {
 } from './ui/select';
 import { Textarea } from './ui/textarea';
 
-export default function TaskForm({ board }: { board: Board }) {
-    const { data, setData, post, errors, reset } = useForm<{
+export default function TaskForm({
+    mode,
+    board,
+    task,
+}: {
+    mode: 'create' | 'edit';
+    board: Board;
+    task?: Task;
+}) {
+    const currentTask = {
+        id: task?.id,
+        title: task?.title,
+        description: task?.description,
+        subtasks: task?.subtasks,
+        statusId: task?.status_id,
+    };
+    const { data, setData, post, put, errors, reset } = useForm<{
         title: string;
         description: string;
         subtasks: Subtask[];
         statusId?: string;
-    }>({
-        title: '',
-        description: '',
-        subtasks: [],
-        statusId: board ? board?.statuses[0]?.id : '',
-    });
+    }>(
+        task
+            ? currentTask
+            : ({
+                  title: '',
+                  description: '',
+                  subtasks: [],
+                  statusId: board ? board?.statuses[0]?.id : '',
+              } as any),
+    );
 
     const emptySubtask = { name: '', completed: false };
 
     const addSubtask = () =>
         setData('subtasks', [...data?.subtasks, emptySubtask]);
+
     const removeSubtask = (subtaskIndex: number) => {
         const updatedSubtasks = data.subtasks.filter(
             (_, index) => index !== subtaskIndex,
         );
+
         setData('subtasks', updatedSubtasks);
     };
 
     const submit = () => {
-        post('/tasks', {
-            onSuccess: () => {
-                setOpen(false);
-                reset();
-            },
-            onError: (errors) => {
-                console.log(errors);
-            },
-        });
+        mode === 'create' &&
+            post('/tasks', {
+                onSuccess: () => {
+                    setOpen(false);
+                    reset();
+                },
+                onError: (errors) => {
+                    console.log(errors);
+                },
+            });
+
+        mode === 'edit' &&
+            put(`/tasks/${task?.id}`, {
+                onSuccess: () => {
+                    setOpen(false);
+                    reset();
+                },
+                onError: (errors) => {
+                    console.log(errors);
+                },
+            });
     };
 
     const [open, setOpen] = useState(false);
+
+    useEffect(() => {}, []);
 
     return (
         <Dialog
@@ -68,14 +103,20 @@ export default function TaskForm({ board }: { board: Board }) {
                 reset();
             }}
         >
-            <DialogTrigger disabled={board?.statuses?.length <= 0}>
-                <Button disabled={board?.statuses?.length <= 0}>
-                    + Add new task
-                </Button>
-            </DialogTrigger>
+            {mode === 'create' && (
+                <DialogTrigger disabled={board?.statuses?.length <= 0}>
+                    <Button disabled={board?.statuses?.length <= 0}>
+                        + Add new task
+                    </Button>
+                </DialogTrigger>
+            )}
+            {mode === 'edit' && <DialogTrigger>Edit task</DialogTrigger>}
             <DialogContent>
                 <DialogHeader className="mb-4">
-                    <DialogTitle>Add New Task</DialogTitle>
+                    <DialogTitle>
+                        {mode === 'create' && 'Add New Task'}
+                        {mode === 'edit' && 'Edit Task'}
+                    </DialogTitle>
                 </DialogHeader>
                 <form
                     onSubmit={(e) => {
@@ -182,7 +223,12 @@ export default function TaskForm({ board }: { board: Board }) {
                         </SelectContent>
                     </Select>
 
-                    <Button type="submit">Create Task</Button>
+                    {mode === 'create' && (
+                        <Button type="submit">Create Task</Button>
+                    )}
+                    {mode === 'edit' && (
+                        <Button onClick={submit}>Save Changes</Button>
+                    )}
                 </form>
             </DialogContent>
         </Dialog>

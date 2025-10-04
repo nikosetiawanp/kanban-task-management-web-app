@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Subtask;
 
-use Str;
 class SubtaskController extends Controller
 {
     public function index()
@@ -28,44 +28,25 @@ class SubtaskController extends Controller
         ]);
     }
 
-    public function store(Request $request)
-    {
-        DB::table('subtasks')
-            ->insert([
-                'id' => Str::uuid(),
-                'name' => $request->name,
-                'completed' => $request->completed,
-                'created_at' => now(),
-                'updated_at' => now(),
-                'task_id' => $request->task_id
-            ]);
-
-        return redirect('/subtasks');
-
-    }
+    public function store(Request $request) {}
 
 
     public function update(Request $request)
     {
-        DB::table('subtasks')
-            ->where('id', $request->id)
-            ->update([
-                'id' => $request->id,
-                'name' => $request->name,
-                'updated_at' => now(),
-                'task_id' => $request->task_id
-            ]);
+        $validated = $request->validate([
+            'id' => 'required|uuid',
+            'name' => 'required|string',
+            'completed' => 'required|boolean'
+        ]);
 
-        return redirect('/subtasks');
+        $subtask = Subtask::find($validated['id']);
 
+        $subtask->update([
+            'id' => $validated['id'],
+            'name' => $validated['name'],
+            'completed' => $validated['completed'],
+        ]);
     }
 
-    public function destroy($id)
-    {
-        DB::table('subtasks')
-            ->where('id', $id)
-            ->delete();
-
-        return redirect('/subtasks');
-    }
+    public function destroy($id) {}
 }
