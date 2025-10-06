@@ -24,6 +24,9 @@ Route::post('/boards', [BoardController::class, 'store']);
 Route::put('/boards/{id}', [BoardController::class, 'update']);
 Route::delete('/boards/{id}', [BoardController::class, 'destroy']);
 
+// Statuses
+Route::post('/statuses', [StatusController::class, 'store']);
+
 // Tasks
 Route::get('/tasks', action: [TaskController::class, 'index']);
 Route::get('/tasks/{id}', [TaskController::class, 'show']);

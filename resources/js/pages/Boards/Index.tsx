@@ -1,43 +1,22 @@
-import { Link, router } from '@inertiajs/react';
+import AppLayout from '@/layouts/AppLayout';
+import { Board } from '@/types/board';
 
 type BoardProps = {
     id: string;
     name: string;
 };
 
-export default function Index({ boards }: { boards: BoardProps[] }) {
+export default function Index({ board }: { board: Board }) {
     return (
-        <div className="flex">
-            <Sidebar boards={boards} />
-        </div>
-    );
-}
+        <AppLayout board={board}>
+            <div className="flex h-full w-full flex-col items-center justify-center gap-8">
+                <span>
+                    No board is selected. Please select a board from the sidebar
+                    or create a new one to get started.
+                </span>
 
-function Sidebar({ boards }: { boards: BoardProps[] }) {
-    return (
-        <div className="flex w-[300px] flex-col gap-4">
-            <span>ALL BOARDS ({boards.length})</span>
-            {boards.map((board) => {
-                return (
-                    <div className="flex gap-4" key={board.id}>
-                        <Link href={`boards/${board.id}`}>
-                            <span>{board.id}</span>
-                            <span>{board.name}</span>
-                        </Link>
-                        <button
-                            onClick={() => router.delete('/boards/' + board.id)}
-                        >
-                            del
-                        </button>
-                    </div>
-                );
-            })}
-            <button
-                onClick={() => router.post('/boards', { name: 'New Board' })}
-                className="rounded-full bg-white px-4 py-2 text-black"
-            >
-                + Create New Board
-            </button>
-        </div>
+                {/* <BoardForm mode="create" /> */}
+            </div>
+        </AppLayout>
     );
 }

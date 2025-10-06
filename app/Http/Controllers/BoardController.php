@@ -14,16 +14,34 @@ use Illuminate\Support\Facades\Log;
 
 class BoardController extends Controller
 {
-    public function index() {}
+    public function index()
+    {
+        $emptyBoard = [
+            'id' => '',
+            'name' => '',
+            'statuses' => [],
+        ];
+
+        return Inertia::render('Boards/Index', [
+            'board' => $emptyBoard
+        ]);
+    }
 
     public function show($id)
     {
+
+        $emptyBoard = [
+            'id' => '',
+            'name' => '',
+            'statuses' => [],
+        ];
+
         $board = $id
             ? Board::with('statuses.tasks.subtasks')->find($id)
             : Board::with('statuses.tasks.subtasks')->first();
 
         return Inertia::render('Boards/Show', [
-            'board' => $board ?? [],
+            'board' => $board ?? $emptyBoard,
         ]);
     }
 
@@ -39,7 +57,7 @@ class BoardController extends Controller
         $board = Board::create(['name' => $validatedData['name']]);
         $board->statuses()->createMany($validatedData['statuses']);
 
-        return redirect('/boards');
+        return redirect('/boards/' . $board->id);
     }
 
     public function update(Request $request)
@@ -77,7 +95,7 @@ class BoardController extends Controller
         $new = (array_filter($validated["statuses"], fn($status) => empty($status["id"])));
         $board->statuses()->createMany($new);
 
-        return redirect('/boards');
+        return redirect('/boards/' . $board->id);
     }
 
     public function destroy($id)

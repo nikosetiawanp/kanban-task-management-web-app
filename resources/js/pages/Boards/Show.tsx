@@ -1,5 +1,3 @@
-import AppHeader from '@/components/AppHeader';
-import AppSidebar from '@/components/AppSidebar';
 import TaskForm from '@/components/TaskForm';
 import {
     AlertDialog,
@@ -36,7 +34,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import AppLayout from '@/layouts/AppLayout';
 import { cn } from '@/lib/utils';
 import { Board, Status, Task } from '@/types/board';
 import { router, useForm } from '@inertiajs/react';
@@ -49,12 +47,9 @@ export default function Show({ board }: { board: Board }) {
         console.log(board);
     }, []);
     return (
-        <SidebarProvider>
-            <AppSidebar board={board} />
-            <SidebarTrigger></SidebarTrigger>
-            <div className="flex w-full flex-col">
-                <AppHeader board={board} />
-                <div className="w-full p-8">
+        <AppLayout board={board}>
+            <div className="h-full w-full p-8">
+                {board?.id && (
                     <div className="flex gap-4">
                         {board?.statuses?.map((status) => {
                             return (
@@ -66,18 +61,57 @@ export default function Show({ board }: { board: Board }) {
                             );
                         })}
                     </div>
-                </div>
+                )}
+
+                {board.id && board.statuses.length === 0 && (
+                    <div className="flex h-full w-full flex-col items-center justify-center gap-8">
+                        <span>
+                            This board is empty. Create a new column to get
+                            started.
+                        </span>
+                        <Button
+                            onClick={() => {
+                                router.post('/statuses', {
+                                    name: 'New Column',
+                                    color: '#000000',
+                                    boardId: board.id,
+                                });
+                            }}
+                        >
+                            +Add New Column
+                        </Button>
+                    </div>
+                )}
+
+                {!board.id && board.statuses.length === 0 && (
+                    <div className="flex h-full w-full flex-col items-center justify-center gap-8">
+                        <span>
+                            No board is selected. Please select a board from the
+                            sidebar or create a new one to get started.
+                        </span>
+
+                        {/* <BoardForm mode="create" /> */}
+                    </div>
+                )}
             </div>
-        </SidebarProvider>
+        </AppLayout>
     );
 }
 
 function Column({ status, board }: { status: Status; board: Board }) {
     return (
         <div className="flex w-full max-w-[280px] min-w-[280px] flex-col gap-4">
-            <span>
-                {status.name} ({status?.tasks?.length})
-            </span>
+            <div className="flex items-center gap-2">
+                <div
+                    className={cn(
+                        'h-[15px] w-[15px] rounded-full',
+                        `bg-[${status.color}]`,
+                    )}
+                ></div>
+                <span>
+                    {status.name} ({status?.tasks?.length})
+                </span>
+            </div>
             {status?.tasks?.map((task) => {
                 return (
                     <TaskCard
@@ -126,13 +160,11 @@ function TaskCard({
         >
             <DialogTrigger>
                 <Card className="flex w-full flex-col items-start gap-2 p-6">
-                    {/* <div className="flex flex-col items-start justify-start gap-2 bg-destructive"> */}
                     <CardTitle className="">{task.title}</CardTitle>
                     <CardDescription>
                         {completedSubtasks.length} of {task.subtasks.length}{' '}
                         subtasks
                     </CardDescription>
-                    {/* </div> */}
                 </Card>
             </DialogTrigger>
 
@@ -148,11 +180,13 @@ function TaskCard({
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="flex flex-col">
-                                <TaskForm
-                                    mode={'edit'}
-                                    board={board}
-                                    task={task}
-                                />
+                                {board && (
+                                    <TaskForm
+                                        mode={'edit'}
+                                        board={board}
+                                        task={task}
+                                    />
+                                )}
 
                                 <DeleteTask task={task} />
                             </DropdownMenuContent>

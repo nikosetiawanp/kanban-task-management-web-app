@@ -1,6 +1,7 @@
 import { Board } from '@/types/board';
 import { router } from '@inertiajs/react';
 import { EllipsisVertical } from 'lucide-react';
+import { useEffect } from 'react';
 import BoardForm from './BoardForm';
 import TaskForm from './TaskForm';
 import {
@@ -23,12 +24,13 @@ import {
 } from './ui/dropdown-menu';
 
 export default function AppHeader({ board }: { board: Board }) {
+    useEffect(() => {
+        console.log(board);
+    }, []);
     return (
         <header className="flex h-[100px] w-full items-center gap-4 border-b bg-background p-4">
             <span className="mr-auto">{board.name}</span>
-            <TaskForm mode="create" board={board} />
-
-            {/* <Button className="ml-auto">+Add New Task</Button> */}
+            {board && <TaskForm mode="create" board={board} />}
 
             <DropdownMenu>
                 <DropdownMenuTrigger>

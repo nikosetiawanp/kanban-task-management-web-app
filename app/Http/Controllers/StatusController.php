@@ -8,20 +8,35 @@ use Inertia\Inertia;
 
 class StatusController extends Controller
 {
-    public function storeMany(Request $request, $boardId)
+    public function store(Request $request)
     {
         $validated = $request->validate([
-            'statuses' => 'required|array',
-            'statuses.*.name' => 'required|string|max:255',
-            'statuses.*.color' => 'required|string|max:50'
+            'name' => 'required',
+            'color' => 'required|string|size:7',
+            'boardId' => 'required|uuid'
         ]);
 
-        $board = Board::findOrFail($boardId);
-
-        $board->statuses()->createMany($validated['statuses']);
-
-        return Inertia::render('Boards/Show', [
-            'board' => $board->load('statuses.tasks.subtasks')
+        Board::find($validated["boardId"])->statuses()->create([
+            'name' => $validated['name'],
+            'color' => $validated['color'],
+            'board_id' => $validated['boardId']
         ]);
     }
+
+    // public function storeMany(Request $request, $boardId)
+    // {
+    //     $validated = $request->validate([
+    //         'statuses' => 'required|array',
+    //         'statuses.*.name' => 'required|string|max:255',
+    //         'statuses.*.color' => 'required|string|max:50'
+    //     ]);
+
+    //     $board = Board::findOrFail($boardId);
+
+    //     $board->statuses()->createMany($validated['statuses']);
+
+    //     return Inertia::render('Boards/Show', [
+    //         'board' => $board->load('statuses.tasks.subtasks')
+    //     ]);
+    // }
 }

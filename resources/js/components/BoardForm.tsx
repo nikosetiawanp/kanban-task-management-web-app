@@ -49,7 +49,7 @@ export default function BoardForm({
             post('/boards', {
                 onSuccess: () => {
                     setOpen(false);
-                    reset();
+                    // reset();
                 },
                 onError: (errors) => {
                     console.log(errors);
@@ -59,7 +59,7 @@ export default function BoardForm({
             put(`/boards/${board?.id}`, {
                 onSuccess: () => {
                     setOpen(false);
-                    reset();
+                    // reset();
                 },
                 onError: (errors) => {
                     console.log(errors);
@@ -68,6 +68,17 @@ export default function BoardForm({
     };
 
     const [open, setOpen] = useState(false);
+
+    // useEffect(() => {
+    //     if (board) {
+    //         setData({
+    //             name: board.name,
+    //             statuses: board.statuses,
+    //         });
+    //     } else {
+    //         setData(emptyData);
+    //     }
+    // }, [board]);
 
     return (
         <Dialog
