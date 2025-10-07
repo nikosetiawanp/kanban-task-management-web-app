@@ -96,13 +96,16 @@ export default function BoardForm({
 
             {mode === 'edit' && (
                 <DialogTrigger>
-                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    <DropdownMenuItem
+                        className="text-muted"
+                        onSelect={(e) => e.preventDefault()}
+                    >
                         Edit Board
                     </DropdownMenuItem>
                 </DialogTrigger>
             )}
 
-            <DialogContent>
+            <DialogContent className="bg-card">
                 <DialogHeader className="mb-4">
                     <DialogTitle className="line- text-left text-[18px]">
                         {mode === 'create' && 'Add New Board'}

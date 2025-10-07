@@ -121,7 +121,10 @@ export default function TaskForm({
             )}
             {mode === 'edit' && (
                 <DialogTrigger>
-                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    <DropdownMenuItem
+                        className="text-muted"
+                        onSelect={(e) => e.preventDefault()}
+                    >
                         Edit Task
                     </DropdownMenuItem>
                 </DialogTrigger>

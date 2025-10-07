@@ -1,6 +1,5 @@
 import { Board } from '@/types/board';
 import { Link, usePage } from '@inertiajs/react';
-import { useEffect } from 'react';
 
 import { cn } from '@/lib/utils';
 import BoardForm from './BoardForm';
@@ -22,23 +21,19 @@ import IconLightTheme from '../assets/icon-light-theme.svg';
 import IconShowSidebar from '../assets/icon-show-sidebar.svg';
 import LogoLight from '../assets/logo-light.svg';
 
+import { useTheme } from './theme-provider';
 import { Button } from './ui/button';
 import { Switch } from './ui/switch';
 
 export default function AppSidebar({ board }: { board: Board }) {
     const { boards } = usePage<{ boards: Board[]; url: string }>().props;
+    const { open, setOpen } = useSidebar();
+    const { theme, setTheme } = useTheme();
 
-    const {
-        state,
-        open,
-        setOpen,
-        openMobile,
-        setOpenMobile,
-        isMobile,
-        toggleSidebar,
-    } = useSidebar();
+    const toggleTheme = () => {
+        theme === 'dark' ? setTheme('light') : 'dark';
+    };
 
-    useEffect(() => {}, []);
     return (
         <>
             <Sidebar className="border-r font-bold dark:border-r-[#3E3F4E]">
@@ -89,9 +84,18 @@ export default function AppSidebar({ board }: { board: Board }) {
                 </SidebarContent>
 
                 <SidebarFooter className="gap-8 px-3 pb-8">
-                    <div className="flex w-full items-center justify-center gap-4 rounded-[6px] bg-background py-3">
+                    <div className="flex w-full items-center justify-center gap-6 rounded-[6px] bg-background py-3">
                         <img src={IconLightTheme} alt="icon-light-theme" />
-                        <Switch />
+                        <Switch
+                            className="hover:cursor-pointer data-[state=unchecked]:bg-primary"
+                            checked={theme === 'dark'}
+                            onClick={() => {
+                                {
+                                    theme === 'light' && setTheme('dark');
+                                    theme === 'dark' && setTheme('light');
+                                }
+                            }}
+                        />
                         <img src={IconDarkTheme} alt="icon-dark-theme" />
                     </div>
                     <button

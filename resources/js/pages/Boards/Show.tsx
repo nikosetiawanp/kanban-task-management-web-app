@@ -118,7 +118,7 @@ function Column({ status, board }: { status: Status; board: Board }) {
                 <div
                     className={cn('h-[15px] w-[15px] rounded-full bg-[#fff]')}
                 ></div>
-                <span>
+                <span className="text-[12px] font-bold tracking-[2.4px] text-muted">
                     {status.name} ({status?.tasks?.length})
                 </span>
             </div>
@@ -180,10 +180,10 @@ function TaskCard({
                 </Card>
             </DialogTrigger>
 
-            <DialogContent className="gap-6 border-0 bg-[#2B2C37]">
+            <DialogContent className="gap-6 border-0 bg-card">
                 <DialogHeader className="gap-6">
                     <div className="flex items-center justify-between">
-                        <DialogTitle className="line- text-[18px]">
+                        <DialogTitle className="text-[18px]">
                             {task.title}
                         </DialogTitle>
 
@@ -209,13 +209,13 @@ function TaskCard({
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
-                    <DialogDescription className="text-left text-[13px] leading-[23px] font-bold">
+                    <DialogDescription className="text-left text-[13px] leading-[23px] font-medium">
                         {task.description}
                     </DialogDescription>
                 </DialogHeader>
 
                 <div className="flex flex-col gap-2">
-                    <span>
+                    <span className="text-[12px] font-bold">
                         Subtasks ({completedSubtasks.length} of{' '}
                         {task.subtasks.length})
                     </span>
@@ -224,7 +224,7 @@ function TaskCard({
                             <Card className="flex items-center justify-start gap-2 rounded-sm border-0 bg-background p-3 shadow-none hover:bg-primary/25">
                                 <div className="flex w-full items-center justify-start gap-4">
                                     <Checkbox
-                                        className="rounded-xs hover:cursor-pointer"
+                                        className="rounded-xs border-muted hover:cursor-pointer"
                                         checked={subtask.completed && true}
                                         onCheckedChange={() =>
                                             router.put(
@@ -242,7 +242,7 @@ function TaskCard({
                                         className={cn(
                                             'text-[12px] font-bold',
                                             subtask.completed &&
-                                                'text-[#fff]/50 line-through',
+                                                'text-[#000]/50 line-through dark:text-[#fff]/50',
                                         )}
                                     >
                                         {subtask.name}
@@ -267,7 +267,9 @@ function TaskCard({
                     }}
                 >
                     <div className="flex flex-col gap-2">
-                        <Label>Status</Label>
+                        <Label className="text-[12px] font-bold text-muted">
+                            Current Status
+                        </Label>
                         <SelectTrigger>
                             <SelectValue placeholder="Select status" />
                         </SelectTrigger>
@@ -296,7 +298,7 @@ function DeleteTask({ task }: { task: Task }) {
                     Delete Task
                 </DropdownMenuItem>
             </AlertDialogTrigger>
-            <AlertDialogContent className="border-0">
+            <AlertDialogContent className="border-0 bg-card">
                 <AlertDialogHeader>
                     <AlertDialogTitle className="text-destructive">
                         Delete this task?
@@ -306,7 +308,7 @@ function DeleteTask({ task }: { task: Task }) {
                         and its subtasks? This action cannot be reversed.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
-                <AlertDialogFooter>
+                <AlertDialogFooter className="gap-4">
                     <Button
                         className="w-full"
                         onClick={(e) => {
