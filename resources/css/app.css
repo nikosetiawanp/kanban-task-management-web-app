@@ -69,7 +69,7 @@
 }
 
 :root {
-    --background: #e4ebfa;
+    --background: #f4f7fd;
     --foreground: oklch(0.145 0 0);
     --card: #fff;
     --card-foreground: oklch(0.145 0 0);

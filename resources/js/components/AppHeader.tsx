@@ -146,7 +146,7 @@ function DeleteBoard({ board }: { board: Board }) {
                     Delete Board
                 </DropdownMenuItem>
             </AlertDialogTrigger>
-            <AlertDialogContent className="max-w-[415px] border-0">
+            <AlertDialogContent className="max-w-[415px] border-0 bg-card">
                 <AlertDialogHeader>
                     <AlertDialogTitle className="text-left text-destructive">
                         Delete this board?
@@ -167,7 +167,7 @@ function DeleteBoard({ board }: { board: Board }) {
                     >
                         Delete
                     </Button>
-                    <AlertDialogCancel className="w-full p-0">
+                    <AlertDialogCancel className="w-full border-0 p-0">
                         <Button className="w-full" variant="secondary">
                             Cancel
                         </Button>
