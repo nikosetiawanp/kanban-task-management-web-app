@@ -120,7 +120,7 @@ export default function TaskForm({
             )}
             <DialogContent>
                 <DialogHeader className="mb-4">
-                    <DialogTitle>
+                    <DialogTitle className="line- text-[18px]">
                         {mode === 'create' && 'Add New Task'}
                         {mode === 'edit' && 'Edit Task'}
                     </DialogTitle>

@@ -1,7 +1,6 @@
 import TaskForm from '@/components/TaskForm';
 import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
@@ -39,18 +38,15 @@ import { cn } from '@/lib/utils';
 import { Board, Status, Task } from '@/types/board';
 import { router, useForm } from '@inertiajs/react';
 import { Label } from '@radix-ui/react-label';
-import { EllipsisVertical } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import IconVerticalEllipsis from '../../assets/icon-vertical-ellipsis.svg';
 
 export default function Show({ board }: { board: Board }) {
-    useEffect(() => {
-        console.log(board);
-    }, []);
     return (
         <AppLayout board={board}>
-            <div className="h-full w-full p-8">
-                {board?.id && (
-                    <div className="flex gap-4">
+            <div className="h-full w-full overflow-x-auto p-8">
+                {board?.id && board.statuses.length > 0 && (
+                    <div className="flex h-full gap-4">
                         {board?.statuses?.map((status) => {
                             return (
                                 <Column
@@ -60,6 +56,25 @@ export default function Show({ board }: { board: Board }) {
                                 />
                             );
                         })}
+
+                        {/* New Column */}
+                        <div className="flex h-auto w-full max-w-[280px] min-w-[280px] flex-col gap-4">
+                            <div className="h-[26px]"></div>
+                            <div
+                                onClick={() => {
+                                    router.post('/statuses', {
+                                        name: 'New Column',
+                                        color: '#000000',
+                                        boardId: board.id,
+                                    });
+                                }}
+                                className="flex h-full w-full flex-row items-center justify-center rounded-lg border-0 bg-card/10 p-6 hover:cursor-pointer hover:bg-card/50"
+                            >
+                                <span className="text-[24px] font-bold text-sidebar-foreground">
+                                    + New Column
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 )}
 
@@ -89,8 +104,6 @@ export default function Show({ board }: { board: Board }) {
                             No board is selected. Please select a board from the
                             sidebar or create a new one to get started.
                         </span>
-
-                        {/* <BoardForm mode="create" /> */}
                     </div>
                 )}
             </div>
@@ -100,13 +113,10 @@ export default function Show({ board }: { board: Board }) {
 
 function Column({ status, board }: { status: Status; board: Board }) {
     return (
-        <div className="flex w-full max-w-[280px] min-w-[280px] flex-col gap-4">
+        <div className="flex h-full w-full max-w-[280px] min-w-[280px] flex-col gap-4">
             <div className="flex items-center gap-2">
                 <div
-                    className={cn(
-                        'h-[15px] w-[15px] rounded-full',
-                        `bg-[${status.color}]`,
-                    )}
+                    className={cn('h-[15px] w-[15px] rounded-full bg-[#fff]')}
                 ></div>
                 <span>
                     {status.name} ({status?.tasks?.length})
@@ -139,7 +149,7 @@ function TaskCard({
     statuses: Status[];
 }) {
     const completedSubtasks = task.subtasks.filter(
-        (subtask) => subtask.completed === true,
+        (subtask) => subtask.completed,
     );
 
     const { data, setData, put } = useForm({
@@ -159,27 +169,34 @@ function TaskCard({
             }}
         >
             <DialogTrigger>
-                <Card className="flex w-full flex-col items-start gap-2 p-6">
-                    <CardTitle className="">{task.title}</CardTitle>
-                    <CardDescription>
+                <Card className="flex w-full flex-col items-start gap-2 border-0 p-6 hover:cursor-pointer hover:bg-accent">
+                    <CardTitle className="text-heading-m text-left">
+                        {task.title}
+                    </CardTitle>
+                    <CardDescription className="text-[12px] font-bold">
                         {completedSubtasks.length} of {task.subtasks.length}{' '}
                         subtasks
                     </CardDescription>
                 </Card>
             </DialogTrigger>
 
-            <DialogContent className="gap-6">
+            <DialogContent className="gap-6 border-0 bg-[#2B2C37]">
                 <DialogHeader className="gap-6">
                     <div className="flex items-center justify-between">
-                        <DialogTitle>{task.title}</DialogTitle>
+                        <DialogTitle className="line- text-[18px]">
+                            {task.title}
+                        </DialogTitle>
 
                         <DropdownMenu>
                             <DropdownMenuTrigger>
                                 <Button variant="ghost" size="icon">
-                                    <EllipsisVertical />
+                                    <img
+                                        src={IconVerticalEllipsis}
+                                        alt="icon-vertical-ellipsis"
+                                    />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent className="flex flex-col">
+                            <DropdownMenuContent className="flex flex-col border-0">
                                 {board && (
                                     <TaskForm
                                         mode={'edit'}
@@ -192,7 +209,9 @@ function TaskCard({
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
-                    <DialogDescription>{task.description}</DialogDescription>
+                    <DialogDescription className="text-left text-[13px] leading-[23px] font-bold">
+                        {task.description}
+                    </DialogDescription>
                 </DialogHeader>
 
                 <div className="flex flex-col gap-2">
@@ -202,22 +221,28 @@ function TaskCard({
                     </span>
                     {task.subtasks.map((subtask) => {
                         return (
-                            <Card
-                                className="flex items-center justify-start gap-2 p-3 hover:cursor-pointer"
-                                onClick={() =>
-                                    router.put(`/subtasks/${subtask.id}`, {
-                                        id: subtask.id,
-                                        name: subtask.name,
-                                        completed: !subtask.completed,
-                                    })
-                                }
-                            >
+                            <Card className="flex items-center justify-start gap-2 rounded-sm border-0 bg-background p-3 shadow-none">
                                 <div className="flex w-full items-center justify-start gap-4">
-                                    <Checkbox checked={subtask.completed} />
+                                    <Checkbox
+                                        className="rounded-xs hover:cursor-pointer"
+                                        checked={subtask.completed && true}
+                                        onCheckedChange={() =>
+                                            router.put(
+                                                `/subtasks/${subtask.id}`,
+                                                {
+                                                    id: subtask.id,
+                                                    name: subtask.name,
+                                                    completed:
+                                                        !subtask.completed,
+                                                },
+                                            )
+                                        }
+                                    />
                                     <span
                                         className={cn(
+                                            'text-[12px] font-bold',
                                             subtask.completed &&
-                                                'text-secondary line-through',
+                                                'text-[#fff]/50 line-through',
                                         )}
                                     >
                                         {subtask.name}
@@ -263,12 +288,15 @@ function TaskCard({
 function DeleteTask({ task }: { task: Task }) {
     return (
         <AlertDialog>
-            <AlertDialogTrigger>
-                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+            <AlertDialogTrigger className="hover:text-destructive">
+                <DropdownMenuItem
+                    className="text-destructive"
+                    onSelect={(e) => e.preventDefault()}
+                >
                     Delete Task
                 </DropdownMenuItem>
             </AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent className="border-0">
                 <AlertDialogHeader>
                     <AlertDialogTitle className="text-destructive">
                         Delete this task?
@@ -279,16 +307,21 @@ function DeleteTask({ task }: { task: Task }) {
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogAction
+                    <Button
+                        className="w-full"
                         onClick={(e) => {
                             e.preventDefault();
                             router.delete(`/tasks/${task.id}`);
                         }}
-                        className="bg-destructive"
+                        variant="destructive"
                     >
                         Delete
-                    </AlertDialogAction>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    </Button>
+                    <AlertDialogCancel className="w-full border-0 p-0">
+                        <Button variant="secondary" className="w-full">
+                            Cancel
+                        </Button>
+                    </AlertDialogCancel>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

@@ -1,6 +1,6 @@
 import AppHeader from '@/components/AppHeader';
 import AppSidebar from '@/components/AppSidebar';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { Board } from '@/types/board';
 import { ReactNode } from 'react';
 
@@ -14,8 +14,8 @@ export default function AppLayout({
     return (
         <SidebarProvider>
             <AppSidebar board={board} />
-            <SidebarTrigger></SidebarTrigger>
-            <div className="flex w-full flex-col">
+            {/* <SidebarTrigger></SidebarTrigger> */}
+            <div className="flex flex-col overflow-x-hidden">
                 <AppHeader board={board} />
                 {children}
             </div>
