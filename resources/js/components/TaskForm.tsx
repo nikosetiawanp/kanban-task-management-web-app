@@ -129,7 +129,7 @@ export default function TaskForm({
                     </DropdownMenuItem>
                 </DialogTrigger>
             )}
-            <DialogContent>
+            <DialogContent className="bg-card">
                 <DialogHeader className="mb-4">
                     <DialogTitle className="line- text-left text-[18px]">
                         {mode === 'create' && 'Add New Task'}

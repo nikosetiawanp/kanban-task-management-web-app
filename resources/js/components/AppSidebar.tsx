@@ -19,6 +19,7 @@ import IconHideSidebar from '../assets/icon-hide-sidebar.svg';
 import IconLightTheme from '../assets/icon-light-theme.svg';
 
 import IconShowSidebar from '../assets/icon-show-sidebar.svg';
+import LogoDark from '../assets/logo-dark.svg';
 import LogoLight from '../assets/logo-light.svg';
 
 import { useTheme } from './theme-provider';
@@ -38,7 +39,11 @@ export default function AppSidebar({ board }: { board: Board }) {
         <>
             <Sidebar className="border-r font-bold dark:border-r-[#3E3F4E]">
                 <SidebarHeader className="h-[100px] justify-center p-6">
-                    <img className="w-[150px]" src={LogoLight} alt="" />
+                    <img
+                        className="w-[150px]"
+                        src={theme === 'dark' ? LogoLight : LogoDark}
+                        alt=""
+                    />
                 </SidebarHeader>
                 <SidebarContent className="gap-4">
                     <span className="pl-6 text-[12px] tracking-[2.4px]">
