@@ -78,7 +78,7 @@ export default function BoardForm({
             }}
         >
             {mode === 'create' && (
-                <DialogTrigger className="flex items-center gap-4 py-4 pl-6 text-[15px] text-primary hover:cursor-pointer">
+                <DialogTrigger className="flex items-center gap-4 py-4 pl-6 text-[15px] font-bold text-primary hover:cursor-pointer">
                     <svg
                         width="16"
                         height="16"
@@ -104,7 +104,7 @@ export default function BoardForm({
 
             <DialogContent>
                 <DialogHeader className="mb-4">
-                    <DialogTitle className="line- text-[18px]">
+                    <DialogTitle className="line- text-left text-[18px]">
                         {mode === 'create' && 'Add New Board'}
                         {mode === 'edit' && 'Edit Board'}
                     </DialogTitle>

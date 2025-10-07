@@ -26,7 +26,7 @@ import { Button } from './ui/button';
 import { Switch } from './ui/switch';
 
 export default function AppSidebar({ board }: { board: Board }) {
-    const { boards, url } = usePage<{ boards: Board[]; url: string }>().props;
+    const { boards } = usePage<{ boards: Board[]; url: string }>().props;
 
     const {
         state,
@@ -88,7 +88,7 @@ export default function AppSidebar({ board }: { board: Board }) {
                     </SidebarMenu>
                 </SidebarContent>
 
-                <SidebarFooter className="gap-8 px-4 pb-8">
+                <SidebarFooter className="gap-8 px-3 pb-8">
                     <div className="flex w-full items-center justify-center gap-4 rounded-[6px] bg-background py-3">
                         <img src={IconLightTheme} alt="icon-light-theme" />
                         <Switch />
@@ -96,7 +96,7 @@ export default function AppSidebar({ board }: { board: Board }) {
                     </div>
                     <button
                         onClick={() => setOpen(false)}
-                        className="flex items-center gap-4 hover:cursor-pointer"
+                        className="flex items-center gap-4 px-4 hover:cursor-pointer"
                     >
                         <img src={IconHideSidebar} alt="icon-hide-sidebar" />
                         <span className="text-[15px]">Hide Sidebar</span>

@@ -10,7 +10,7 @@ export default function Index({ board }: { board: Board }) {
     return (
         <AppLayout board={board}>
             <div className="flex h-full w-full flex-col items-center justify-center gap-8">
-                <span>
+                <span className="text-center text-sidebar-foreground">
                     No board is selected. Please select a board from the sidebar
                     or create a new one to get started.
                 </span>

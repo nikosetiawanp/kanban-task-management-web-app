@@ -80,7 +80,7 @@ export default function Show({ board }: { board: Board }) {
 
                 {board.id && board.statuses.length === 0 && (
                     <div className="flex h-full w-full flex-col items-center justify-center gap-8">
-                        <span>
+                        <span className="text-center text-sidebar-foreground">
                             This board is empty. Create a new column to get
                             started.
                         </span>
@@ -221,7 +221,7 @@ function TaskCard({
                     </span>
                     {task.subtasks.map((subtask) => {
                         return (
-                            <Card className="flex items-center justify-start gap-2 rounded-sm border-0 bg-background p-3 shadow-none">
+                            <Card className="flex items-center justify-start gap-2 rounded-sm border-0 bg-background p-3 shadow-none hover:bg-primary/25">
                                 <div className="flex w-full items-center justify-start gap-4">
                                     <Checkbox
                                         className="rounded-xs hover:cursor-pointer"
