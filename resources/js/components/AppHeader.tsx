@@ -21,16 +21,18 @@ import {
 } from './ui/dropdown-menu';
 
 import IconVerticalEllipsis from '../assets/icon-vertical-ellipsis.svg';
+import LogoMobile from '../assets/logo-mobile.svg';
 
 export default function AppHeader({ board }: { board: Board }) {
     return (
-        <header className="flex h-[100px] w-full items-center gap-4 border-b bg-sidebar px-8 dark:border-b-[#3E3F4E]">
+        <header className="flex h-[100px] w-full items-center gap-4 border-b px-8 dark:border-b-[#3E3F4E] dark:bg-sidebar">
+            <img className="md:hidden" src={LogoMobile} alt="" />
             <span className="mr-auto text-[24px] font-bold">{board.name}</span>
             {board && <TaskForm mode="create" board={board} />}
 
             <DropdownMenu>
-                <DropdownMenuTrigger className="w-fit">
-                    <Button className="w-fit" variant="ghost">
+                <DropdownMenuTrigger className="min-w-[44px]">
+                    <Button className="w-full" variant="ghost">
                         <img
                             src={IconVerticalEllipsis}
                             alt="icon-vertical-ellipsis"
@@ -50,17 +52,20 @@ export default function AppHeader({ board }: { board: Board }) {
 function DeleteBoard({ board }: { board: Board }) {
     return (
         <AlertDialog>
-            <AlertDialogTrigger className="text-destructive">
-                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+            <AlertDialogTrigger>
+                <DropdownMenuItem
+                    className="text-destructive"
+                    onSelect={(e) => e.preventDefault()}
+                >
                     Delete Board
                 </DropdownMenuItem>
             </AlertDialogTrigger>
             <AlertDialogContent className="max-w-[415px] border-0">
                 <AlertDialogHeader>
-                    <AlertDialogTitle className="text-destructive">
+                    <AlertDialogTitle className="text-left text-destructive">
                         Delete this board?
                     </AlertDialogTitle>
-                    <AlertDialogDescription className="text-[13px] leading-[23px]">
+                    <AlertDialogDescription className="text-left text-[13px] leading-[23px]">
                         Are you sure you want to delete the {board?.name} board?
                         This action will remove all columns and tasks and cannot
                         be reversed.
@@ -68,7 +73,7 @@ function DeleteBoard({ board }: { board: Board }) {
                 </AlertDialogHeader>
                 <AlertDialogFooter className="gap-4">
                     <Button
-                        className="w-full"
+                        className="w-full max-sm:order-1"
                         variant="destructive"
                         onClick={() => {
                             router.delete('/boards/' + board?.id);

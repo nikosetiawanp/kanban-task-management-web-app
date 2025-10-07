@@ -3,6 +3,7 @@ import { Board, Subtask, Task } from '@/types/board';
 import { useForm } from '@inertiajs/react';
 import { X } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import IconAddTaskMobile from '../assets/icon-add-task-mobile.svg';
 import { Button } from './ui/button';
 import {
     Dialog,
@@ -107,7 +108,14 @@ export default function TaskForm({
             {mode === 'create' && (
                 <DialogTrigger disabled={board?.statuses?.length <= 0}>
                     <Button disabled={board?.statuses?.length <= 0}>
-                        + Add new task
+                        <div className="md:hidden"></div>
+                        <span className="hidden md:block">+ Add new task</span>
+                        <img
+                            className="md:hidden"
+                            src={IconAddTaskMobile}
+                            alt="icon-add-task-mobile"
+                        />
+                        <div className="md:hidden"></div>
                     </Button>
                 </DialogTrigger>
             )}
@@ -120,7 +128,7 @@ export default function TaskForm({
             )}
             <DialogContent>
                 <DialogHeader className="mb-4">
-                    <DialogTitle className="line- text-[18px]">
+                    <DialogTitle className="line- text-left text-[18px]">
                         {mode === 'create' && 'Add New Task'}
                         {mode === 'edit' && 'Edit Task'}
                     </DialogTitle>

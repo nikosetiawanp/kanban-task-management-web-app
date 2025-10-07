@@ -14,8 +14,8 @@ export default function AppLayout({
     return (
         <SidebarProvider>
             <AppSidebar board={board} />
-            {/* <SidebarTrigger></SidebarTrigger> */}
-            <div className="flex flex-col overflow-x-hidden">
+
+            <div className="flex w-full flex-col overflow-x-hidden">
                 <AppHeader board={board} />
                 {children}
             </div>
