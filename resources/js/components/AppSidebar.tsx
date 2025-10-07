@@ -31,10 +31,6 @@ export default function AppSidebar({ board }: { board: Board }) {
     const { open, setOpen } = useSidebar();
     const { theme, setTheme } = useTheme();
 
-    const toggleTheme = () => {
-        theme === 'dark' ? setTheme('light') : 'dark';
-    };
-
     return (
         <>
             <Sidebar className="border-r font-bold dark:border-r-[#3E3F4E]">

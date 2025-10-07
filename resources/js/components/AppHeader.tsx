@@ -30,12 +30,13 @@ import { Switch } from './ui/switch';
 
 import IconDarkTheme from '../assets/icon-dark-theme.svg';
 import IconLightTheme from '../assets/icon-light-theme.svg';
+import { useTheme } from './theme-provider';
 
 export default function AppHeader({ board }: { board: Board }) {
     const { boards } = usePage<{ boards: Board[]; url: string }>().props;
 
     return (
-        <header className="flex h-[100px] w-full items-center gap-4 border-b px-6 lg:px-8 dark:border-b-[#3E3F4E] dark:bg-sidebar">
+        <header className="flex h-[100px] w-full items-center gap-4 border-b bg-sidebar px-6 lg:px-8 dark:border-b-[#3E3F4E] dark:bg-sidebar">
             <img className="md:hidden" src={LogoMobile} alt="" />
             <span className="mr-auto hidden text-[24px] font-bold md:block">
                 {board.name}
@@ -67,6 +68,8 @@ export default function AppHeader({ board }: { board: Board }) {
 }
 
 function MobileSidebar({ board, boards }: { board: Board; boards: Board[] }) {
+    const { theme, setTheme } = useTheme();
+
     return (
         <Dialog>
             <DialogTrigger className="mr-auto flex items-center gap-3 text-[18px] font-bold md:hidden">
@@ -74,7 +77,7 @@ function MobileSidebar({ board, boards }: { board: Board; boards: Board[] }) {
                 {!board.name && 'Select Board'}
                 <img src={IconChevronDown} alt="icon-chevron-down" />
             </DialogTrigger>
-            <DialogContent className="max-w-[325px] bg-card p-0 py-6 md:hidden">
+            <DialogContent className="max-w-[325px] border-0 bg-card p-0 py-6 md:hidden">
                 <span className="pl-6 text-left text-[12px] font-bold tracking-[2.4px] text-sidebar-foreground">
                     ALL BOARDS ({boards.length})
                 </span>
@@ -112,9 +115,18 @@ function MobileSidebar({ board, boards }: { board: Board; boards: Board[] }) {
                 </div>
 
                 <div className="px-6">
-                    <div className="flex w-full items-center justify-center gap-4 rounded-[6px] bg-background py-3">
+                    <div className="flex w-full items-center justify-center gap-6 rounded-[6px] bg-background py-3">
                         <img src={IconLightTheme} alt="icon-light-theme" />
-                        <Switch />
+                        <Switch
+                            className="hover:cursor-pointer data-[state=unchecked]:bg-primary"
+                            checked={theme === 'dark'}
+                            onClick={() => {
+                                {
+                                    theme === 'light' && setTheme('dark');
+                                    theme === 'dark' && setTheme('light');
+                                }
+                            }}
+                        />
                         <img src={IconDarkTheme} alt="icon-dark-theme" />
                     </div>
                 </div>
