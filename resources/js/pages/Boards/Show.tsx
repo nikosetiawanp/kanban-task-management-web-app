@@ -29,7 +29,9 @@ import {
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
+    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
@@ -60,12 +62,13 @@ export default function Show({ board }: { board: Board }) {
                         {/* New Column */}
                         <div className="flex h-auto w-full max-w-[280px] min-w-[280px] flex-col gap-4">
                             <div className="h-[26px]"></div>
+
                             <div
                                 className="group flex h-full w-full flex-row items-center justify-center rounded-lg border-0 bg-[#E9EFFA] p-6 hover:cursor-pointer hover:bg-card/50 dark:bg-[#2B2C37]"
                                 onClick={() => {
                                     router.post('/statuses', {
                                         name: 'New Column',
-                                        color: '#000000',
+                                        color: '#ffffff',
                                         boardId: board.id,
                                     });
                                 }}
@@ -88,7 +91,7 @@ export default function Show({ board }: { board: Board }) {
                             onClick={() => {
                                 router.post('/statuses', {
                                     name: 'New Column',
-                                    color: '#000000',
+                                    color: '#9CA3AF',
                                     boardId: board.id,
                                 });
                             }}
@@ -115,9 +118,14 @@ function Column({ status, board }: { status: Status; board: Board }) {
     return (
         <div className="flex h-full w-full max-w-[280px] min-w-[280px] flex-col gap-4">
             <div className="flex items-center gap-2">
-                <div
-                    className={cn('h-[15px] w-[15px] rounded-full bg-[#fff]')}
-                ></div>
+                {/* Select Color */}
+                <SelectColor status={status} />
+                {/* <div
+                    className={cn(
+                        'h-[15px] w-[15px] rounded-full ring-primary/50 hover:cursor-pointer hover:ring-4',
+                    )}
+                    style={{ backgroundColor: status.color }}
+                ></div> */}
                 <span className="text-[12px] font-bold tracking-[2.4px] text-muted">
                     {status.name} ({status?.tasks?.length})
                 </span>
@@ -327,5 +335,60 @@ function DeleteTask({ task }: { task: Task }) {
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
+    );
+}
+
+function SelectColor({ status }: { status: Status }) {
+    const colors = [
+        { name: 'Gray', value: '#9CA3AF' },
+        { name: 'Sky Blue', value: '#49C4E5' },
+        { name: 'Mint Green', value: '#67E2AE' },
+        { name: 'Lavender', value: '#8471F2' },
+        { name: 'Coral', value: '#FF8C82' },
+        { name: 'Sunflower', value: '#FFD866' },
+        { name: 'Peach', value: '#F5A97F' },
+        { name: 'Rose', value: '#F472B6' },
+    ];
+    return (
+        <Select
+            value={status.color}
+            onValueChange={(value) => {
+                router.put('/statuses/' + status.id, {
+                    id: status.id,
+                    name: status.name,
+                    color: value,
+                });
+            }}
+        >
+            <SelectTrigger
+                style={{ backgroundColor: status.color }}
+                className="hover:ring- h-4 w-4 rounded-full border border-accent p-0 ring-primary/50 hover:cursor-pointer [&>svg]:hidden"
+            ></SelectTrigger>
+            <SelectContent className="border-0">
+                <SelectGroup>
+                    <SelectLabel className="text-muted">
+                        Select color
+                    </SelectLabel>
+                    {colors.map((color) => {
+                        return (
+                            <SelectItem
+                                className={cn(
+                                    'text-muted',
+                                    status.color === color.value &&
+                                        'text-foreground',
+                                )}
+                                value={color.value}
+                            >
+                                <span
+                                    className="mr-2 inline-block h-4 w-4 rounded-full"
+                                    style={{ backgroundColor: color.value }}
+                                />
+                                {color.name}
+                            </SelectItem>
+                        );
+                    })}
+                </SelectGroup>
+            </SelectContent>
+        </Select>
     );
 }

@@ -32,7 +32,7 @@ export default function BoardForm({
         const newStatus: Status = {
             id: '',
             name: '',
-            color: '#000000',
+            color: '#9CA3AF',
         };
         setData('statuses', [...data?.statuses, newStatus]);
     };

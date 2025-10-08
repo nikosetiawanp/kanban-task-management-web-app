@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Board;
-use Inertia\Inertia;
+use App\Models\Status;
 
 class StatusController extends Controller
 {
@@ -21,6 +21,22 @@ class StatusController extends Controller
             'color' => $validated['color'],
             'board_id' => $validated['boardId']
         ]);
+    }
+
+    public function update(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required',
+            'name' => 'required',
+            'color' => 'required|string|size:7',
+        ]);
+
+        Status::find($validated['id'])->update([
+            'name' => $validated['name'],
+            'color' => $validated['color']
+        ]);
+
+        // dd($request->all());
     }
 
     // public function storeMany(Request $request, $boardId)
