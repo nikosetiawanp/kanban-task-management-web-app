@@ -52,9 +52,9 @@ export default function AppSidebar({ board }: { board: Board }) {
                                     <SidebarMenuItem key={b.id}>
                                         <SidebarMenuButton
                                             className={cn(
-                                                'group gap-4 rounded-l-none rounded-r-full py-6 pl-6 font-bold hover:cursor-pointer hover:bg-white hover:text-primary active:bg-white active:text-primary',
+                                                'group gap-4 rounded-l-none rounded-r-full py-6 pl-6 font-bold hover:cursor-pointer hover:bg-[#979797]/10 hover:text-primary active:bg-white active:text-primary dark:hover:bg-white',
                                                 b.id === board.id &&
-                                                    'bg-primary text-white hover:bg-primary hover:text-white',
+                                                    'bg-primary text-white hover:bg-primary hover:text-white dark:hover:bg-primary',
                                             )}
                                         >
                                             <svg
