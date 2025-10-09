@@ -83,6 +83,5 @@ class TaskController extends Controller
     public function destroy($id)
     {
         Task::destroy(($id));
-        return redirect('/boards');
     }
 }

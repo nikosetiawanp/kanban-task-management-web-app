@@ -28,7 +28,7 @@ class StatusFactory extends Factory
         ]);
 
         return [
-            'name' => fake()->words(2, true),
+            'name' => rtrim($this->faker->realTextBetween(4, 10), '.'),
             'color' => $colors->random(),
         ];
     }

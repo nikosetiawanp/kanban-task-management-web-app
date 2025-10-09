@@ -18,7 +18,7 @@ class BoardFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->words(2, true),
+            'name' => rtrim($this->faker->realTextBetween(8, 20), '.'),
         ];
     }
 }

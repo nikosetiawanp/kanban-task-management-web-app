@@ -17,8 +17,8 @@ class TaskFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => fake()->words(2, true),
-            'description' => fake()->paragraph(),
+            'title' => rtrim($this->faker->realTextBetween(8, 20), '.'),
+            'description' => $this->faker->realTextBetween(160, 200),
         ];
     }
 }

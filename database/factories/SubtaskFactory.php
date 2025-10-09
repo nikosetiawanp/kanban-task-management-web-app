@@ -17,8 +17,8 @@ class SubtaskFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->words(2, true),
-            'completed' => fake()->boolean(),
+            'name' => rtrim($this->faker->realTextBetween(8, 20), '.'),
+            'completed' => $this->faker->boolean(),
         ];
     }
 }

@@ -30,14 +30,11 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        Board::factory()
-            ->count(5)
+        Board::factory()->count(5)
             ->has(
-                Status::factory()
-                    ->count(3)
+                Status::factory()->count(3)
                     ->has(
-                        Task::factory()
-                            ->count(3)
+                        Task::factory()->count(3)
                             ->has(
                                 Subtask::factory()
                                     ->count(3),
