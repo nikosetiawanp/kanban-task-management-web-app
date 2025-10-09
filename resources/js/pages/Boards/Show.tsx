@@ -61,10 +61,10 @@ export default function Show({ board }: { board: Board }) {
 
                         {/* New Column */}
                         <div className="flex h-auto w-full max-w-[280px] min-w-[280px] flex-col gap-4">
-                            <div className="h-[26px]"></div>
+                            <div className="h-[20px]"></div>
 
                             <div
-                                className="group flex h-full w-full flex-row items-center justify-center rounded-lg border-0 bg-[#E9EFFA] p-6 hover:cursor-pointer hover:bg-card/50 dark:bg-[#2B2C37]"
+                                className="group flex h-full w-full flex-row items-center justify-center rounded-lg border-0 bg-[#E9EFFA]/50 p-6 hover:cursor-pointer hover:bg-card/50 dark:bg-[#2B2C37]/25"
                                 onClick={() => {
                                     router.post('/statuses', {
                                         name: 'New Column',

@@ -30,15 +30,19 @@ class TaskController extends Controller
             'subtasks.*.completed' => 'sometimes|boolean'
         ]);
 
-        // Create task
-        $task = Task::create([
-            'title' => $validated['title'],
-            'description' => $validated['description'],
-            'status_id' => $validated['statusId'],
-        ]);
+        DB::transaction(function () use ($validated) {
+            // Create task
+            $task = Task::create([
+                'title' => $validated['title'],
+                'description' => $validated['description'],
+                'status_id' => $validated['statusId'],
+            ]);
 
-        // Create subtasks
-        $task->subtasks()->createMany($validated["subtasks"]);
+            // Create subtasks
+            $task->subtasks()->createMany($validated["subtasks"] ?? []);
+
+            return $task;
+        });
     }
 
     public function update(Request $request)
@@ -53,32 +57,35 @@ class TaskController extends Controller
             'subtasks.*.completed' => 'sometimes|boolean'
         ]);
 
-        $task = Task::find($validated['id']);
+        DB::transaction(function () use ($validated) {
+            $task = Task::find($validated['id']);
 
-        // Update task
-        $task->update([
-            'title' => $validated['title'],
-            'description' => $validated['description'],
-            'status_id' => $validated['statusId'],
-        ]);
+            // Update task
+            $task->update([
+                'title' => $validated['title'],
+                'description' => $validated['description'],
+                'status_id' => $validated['statusId'],
+            ]);
 
-        $originalIds = $task->subtasks()->pluck('id')->toArray();
-        $requestIds = array_column((array_filter($validated["subtasks"], fn($subtask) => !empty($subtask["id"]))), 'id');
-        $deletedIds = array_diff($originalIds, $requestIds);
+            $originalIds = $task->subtasks()->pluck('id')->toArray();
+            $requestIds = array_column((array_filter($validated["subtasks"], fn($subtask) => !empty($subtask["id"]))), 'id');
+            $deletedIds = array_diff($originalIds, $requestIds);
 
-        // Delete subtasks
-        Subtask::whereIn('id', $deletedIds)->delete();
+            // Delete subtasks
+            Subtask::whereIn('id', $deletedIds)->delete();
 
-        // Update subtasks
-        $update = (array_filter($validated["subtasks"], fn($subtask) => !empty($subtask['id'])));
-        Subtask::upsert($update, ['id'], ['name', 'completed']);
+            // Update subtasks
+            $update = (array_filter($validated["subtasks"], fn($subtask) => !empty($subtask['id'])));
+            Subtask::upsert($update, ['id'], ['name', 'completed']);
 
-        // Create subtasks
-        $new = (array_filter($validated["subtasks"], fn($status) => empty($status["id"])));
-        $task->subtasks()->createMany($new);
+            // Create subtasks
+            $new = (array_filter($validated["subtasks"], fn($status) => empty($status["id"])));
+            $task->subtasks()->createMany($new);
 
-        return redirect(('/tasks'));
+            return $task;
+        });
     }
+
 
     public function destroy($id)
     {

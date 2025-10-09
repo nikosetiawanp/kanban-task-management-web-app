@@ -54,8 +54,11 @@ class BoardController extends Controller
             'statuses.*.color' => 'required|string|size:7',
         ]);
 
-        $board = Board::create(['name' => $validatedData['name']]);
-        $board->statuses()->createMany($validatedData['statuses']);
+        $board = DB::transaction(function () use ($validatedData) {
+            $board = Board::create(['name' => $validatedData['name']]);
+            $board->statuses()->createMany($validatedData['statuses'] ?? []);
+            return $board;
+        });
 
         return redirect('/boards/' . $board->id);
     }
@@ -73,27 +76,32 @@ class BoardController extends Controller
             'statuses.*.board_id' => 'sometimes|nullable|uuid'
         ]);
 
-        $board = Board::find($validated["id"]);
+        $board = DB::transaction(function () use ($validated) {
 
-        // Update board name
-        $board->update([
-            "name" => $request["name"],
-        ]);
+            $board = Board::find($validated["id"]);
 
-        $originalIds = $board->statuses()->pluck('id')->toArray();
-        $requestIds = array_column((array_filter($validated["statuses"], fn($status) => !empty($status["id"]))), 'id');
-        $deletedIds = array_diff($originalIds, $requestIds);
+            // Update board name
+            $board->update([
+                "name" => $validated["name"],
+            ]);
 
-        // Delete statuses
-        Status::whereIn('id', $deletedIds)->delete();
+            $originalIds = $board->statuses()->pluck('id')->toArray();
+            $requestIds = array_column((array_filter($validated["statuses"], fn($status) => !empty($status["id"]))), 'id');
+            $deletedIds = array_diff($originalIds, $requestIds);
 
-        // Update statuses
-        $update = (array_filter($validated["statuses"], fn($status) => !empty($status["id"])));
-        Status::upsert($update, ['id'], ['name', 'color']);
+            // Delete statuses
+            Status::whereIn('id', $deletedIds)->delete();
 
-        // Create status
-        $new = (array_filter($validated["statuses"], fn($status) => empty($status["id"])));
-        $board->statuses()->createMany($new);
+            // Update statuses
+            $update = (array_filter($validated["statuses"], fn($status) => !empty($status["id"])));
+            Status::upsert($update, ['id'], ['name', 'color']);
+
+            // Create status
+            $new = (array_filter($validated["statuses"], fn($status) => empty($status["id"])));
+            $board->statuses()->createMany($new);
+
+            return $board;
+        });
 
         return redirect('/boards/' . $board->id);
     }
