@@ -18,31 +18,30 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 // Boards
-Route::get('/boards', [BoardController::class, 'index']);
-Route::get('/boards/{id}', [BoardController::class, 'show']);
-Route::post('/boards', [BoardController::class, 'store']);
-Route::put('/boards/{id}', [BoardController::class, 'update']);
-Route::delete('/boards/{id}', [BoardController::class, 'destroy']);
+Route::get('/boards', [BoardController::class, 'index'])->middleware('auth');
+Route::get('/boards/{id}', [BoardController::class, 'show'])->middleware('auth');
+Route::post('/boards', [BoardController::class, 'store'])->middleware('auth');
+Route::put('/boards/{id}', [BoardController::class, 'update'])->middleware('auth');
+Route::delete('/boards/{id}', [BoardController::class, 'destroy'])->middleware('auth');
 
 // Statuses
-Route::post('/statuses', [StatusController::class, 'store']);
-Route::put('/statuses/{id}', [StatusController::class, 'update']);
+Route::post('/statuses', [StatusController::class, 'store'])->middleware('auth');
+Route::put('/statuses/{id}', [StatusController::class, 'update'])->middleware('auth');
 
 
 // Tasks
-Route::get('/tasks', action: [TaskController::class, 'index']);
-Route::get('/tasks/{id}', [TaskController::class, 'show']);
-Route::post('/tasks', [TaskController::class, 'store']);
-Route::put('/tasks/{id}', [TaskController::class, 'update']);
-Route::delete('/tasks/{id}', [TaskController::class, 'destroy']);
+Route::get('/tasks', action: [TaskController::class, 'index'])->middleware('auth');
+Route::get('/tasks/{id}', [TaskController::class, 'show'])->middleware('auth');
+Route::post('/tasks', [TaskController::class, 'store'])->middleware('auth');
+Route::put('/tasks/{id}', [TaskController::class, 'update'])->middleware('auth');
+Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->middleware('auth');
 
 // Subtasks
-Route::get('/subtasks', [SubtaskController::class, 'index']);
-Route::get('/subtasks/{id}', [SubtaskController::class, 'show']);
-Route::post('/subtasks', [SubtaskController::class, 'store']);
-Route::put('/subtasks/{id}', [SubtaskController::class, 'update']);
-Route::delete('/subtasks/{id}', [SubtaskController::class, 'destroy']);
-
+Route::get('/subtasks', [SubtaskController::class, 'index'])->middleware('auth');
+Route::get('/subtasks/{id}', [SubtaskController::class, 'show'])->middleware('auth');
+Route::post('/subtasks', [SubtaskController::class, 'store'])->middleware('auth');
+Route::put('/subtasks/{id}', [SubtaskController::class, 'update'])->middleware('auth');
+Route::delete('/subtasks/{id}', [SubtaskController::class, 'destroy'])->middleware('auth');
 
 
 require __DIR__ . '/settings.php';

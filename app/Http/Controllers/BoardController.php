@@ -29,7 +29,6 @@ class BoardController extends Controller
 
     public function show($id)
     {
-
         $emptyBoard = [
             'id' => '',
             'name' => '',

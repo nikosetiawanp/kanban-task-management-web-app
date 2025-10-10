@@ -22,14 +22,33 @@ import IconShowSidebar from '../assets/icon-show-sidebar.svg';
 import LogoDark from '../assets/logo-dark.svg';
 import LogoLight from '../assets/logo-light.svg';
 
+import { useInitials } from '@/hooks/use-initials';
+import { SharedData } from '@/types';
+import { ChevronsUpDown } from 'lucide-react';
+import { useEffect } from 'react';
 import { useTheme } from './theme-provider';
 import { Button } from './ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 import { Switch } from './ui/switch';
+import { UserInfo } from './user-info';
+import { UserMenuContent } from './user-menu-content';
 
 export default function AppSidebar({ board }: { board: Board }) {
     const { boards } = usePage<{ boards: Board[]; url: string }>().props;
     const { open, setOpen } = useSidebar();
     const { theme, setTheme } = useTheme();
+
+    const page = usePage<SharedData>();
+    const { auth } = page.props;
+    const getInitials = useInitials();
+
+    useEffect(() => {
+        console.log(auth.user);
+    }, []);
 
     return (
         <>
@@ -84,7 +103,7 @@ export default function AppSidebar({ board }: { board: Board }) {
                     </SidebarMenu>
                 </SidebarContent>
 
-                <SidebarFooter className="gap-8 px-3 pb-8">
+                <SidebarFooter className="gap-4 px-3 pb-8">
                     <div className="flex w-full items-center justify-center gap-6 rounded-[6px] bg-background py-3">
                         <img src={IconLightTheme} alt="icon-light-theme" />
                         <Switch
@@ -99,13 +118,39 @@ export default function AppSidebar({ board }: { board: Board }) {
                         />
                         <img src={IconDarkTheme} alt="icon-dark-theme" />
                     </div>
+
+                    {/* Hide sidebar */}
                     <button
                         onClick={() => setOpen(false)}
-                        className="flex items-center gap-4 px-4 hover:cursor-pointer"
+                        className="mb-4 flex items-center gap-4 px-4 hover:cursor-pointer"
                     >
                         <img src={IconHideSidebar} alt="icon-hide-sidebar" />
                         <span className="text-[15px]">Hide Sidebar</span>
                     </button>
+                    {/* User menu */}
+                    <SidebarMenu>
+                        <SidebarMenuItem>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <SidebarMenuButton
+                                        size="lg"
+                                        className="group text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent"
+                                        data-test="sidebar-menu-button"
+                                    >
+                                        <UserInfo user={auth.user} />
+                                        <ChevronsUpDown className="ml-auto size-4" />
+                                    </SidebarMenuButton>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent
+                                    className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+                                    align="end"
+                                    side="bottom"
+                                >
+                                    <UserMenuContent user={auth.user} />
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </SidebarMenuItem>
+                    </SidebarMenu>
                 </SidebarFooter>
             </Sidebar>
             {!open && (
