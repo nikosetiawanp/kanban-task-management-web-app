@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Board;
 use App\Models\Status;
+use Illuminate\Support\Facades\Gate;
 
 class StatusController extends Controller
 {
@@ -16,7 +17,10 @@ class StatusController extends Controller
             'boardId' => 'required|uuid'
         ]);
 
-        Board::find($validated["boardId"])->statuses()->create([
+        $board = Board::findOrFail($validated['boardId']);
+        Gate::authorize('update-board', $board);
+
+        $board->statuses()->create([
             'name' => $validated['name'],
             'color' => $validated['color'],
             'board_id' => $validated['boardId']
@@ -31,28 +35,12 @@ class StatusController extends Controller
             'color' => 'required|string|size:7',
         ]);
 
-        Status::find($validated['id'])->update([
+        $status = Status::find($validated['id']);
+        Gate::authorize('update-status', $status);
+
+        $status->update([
             'name' => $validated['name'],
             'color' => $validated['color']
         ]);
-
-        // dd($request->all());
     }
-
-    // public function storeMany(Request $request, $boardId)
-    // {
-    //     $validated = $request->validate([
-    //         'statuses' => 'required|array',
-    //         'statuses.*.name' => 'required|string|max:255',
-    //         'statuses.*.color' => 'required|string|max:50'
-    //     ]);
-
-    //     $board = Board::findOrFail($boardId);
-
-    //     $board->statuses()->createMany($validated['statuses']);
-
-    //     return Inertia::render('Boards/Show', [
-    //         'board' => $board->load('statuses.tasks.subtasks')
-    //     ]);
-    // }
 }

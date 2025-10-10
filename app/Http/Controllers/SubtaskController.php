@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Subtask;
+use Illuminate\Support\Facades\Gate;
 
 class SubtaskController extends Controller
 {
@@ -39,10 +40,10 @@ class SubtaskController extends Controller
             'completed' => 'required|boolean'
         ]);
 
-        $subtask = Subtask::find($validated['id']);
+        $subtask = Subtask::with('task.status.board')->find($validated['id']);
+        Gate::authorize('update-subtask', $subtask);
 
         $subtask->update([
-            'id' => $validated['id'],
             'name' => $validated['name'],
             'completed' => $validated['completed'],
         ]);

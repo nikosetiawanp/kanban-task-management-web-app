@@ -15,10 +15,12 @@ return new class extends Migration {
             $table->string('name', length: 30);
             $table->timestamps();
 
-            // $table->integer(column: "user_id");
-            // $table->foreign('user_id')
-            //     ->references('id')
-            //     ->on('users');
+            $table->integer(column: "user_id");
+            $table->foreign('user_id')
+                ->constrained()
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
         });
     }
 

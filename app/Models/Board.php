@@ -13,7 +13,7 @@ class Board extends Model
     use HasUuids;
     protected $guarded = ['id'];
     protected $primaryKey = 'id';
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'user_id'];
 
 
     public function statuses(): HasMany

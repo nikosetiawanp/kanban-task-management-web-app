@@ -22,7 +22,6 @@ import IconShowSidebar from '../assets/icon-show-sidebar.svg';
 import LogoDark from '../assets/logo-dark.svg';
 import LogoLight from '../assets/logo-light.svg';
 
-import { useInitials } from '@/hooks/use-initials';
 import { SharedData } from '@/types';
 import { ChevronsUpDown } from 'lucide-react';
 import { useEffect } from 'react';
@@ -44,7 +43,6 @@ export default function AppSidebar({ board }: { board: Board }) {
 
     const page = usePage<SharedData>();
     const { auth } = page.props;
-    const getInitials = useInitials();
 
     useEffect(() => {
         console.log(auth.user);

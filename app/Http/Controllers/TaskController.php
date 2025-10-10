@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Task;
 use App\Models\Subtask;
-
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 
 
@@ -31,6 +31,10 @@ class TaskController extends Controller
         ]);
 
         DB::transaction(function () use ($validated) {
+            $status = Status::with('board')->find($validated['statusId']);
+
+            Gate::authorize('update-status', $status);
+
             // Create task
             $task = Task::create([
                 'title' => $validated['title'],
@@ -58,7 +62,9 @@ class TaskController extends Controller
         ]);
 
         DB::transaction(function () use ($validated) {
-            $task = Task::find($validated['id']);
+            $task = Task::with('status.board')->find($validated['id']);
+
+            Gate::authorize('update-task', $task);
 
             // Update task
             $task->update([
@@ -89,6 +95,9 @@ class TaskController extends Controller
 
     public function destroy($id)
     {
-        Task::destroy(($id));
+        $task = Task::with('status.board')->find($id);
+
+        Gate::authorize('delete-task', $task);
+        $task->destroy($task['id']);
     }
 }

@@ -8,9 +8,8 @@ use Illuminate\Support\Facades\DB;
 
 use App\Models\Board;
 use App\Models\Status;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class BoardController extends Controller
 {
@@ -29,18 +28,13 @@ class BoardController extends Controller
 
     public function show($id)
     {
-        $emptyBoard = [
-            'id' => '',
-            'name' => '',
-            'statuses' => [],
-        ];
+        $board = Board::with('statuses.tasks.subtasks')->find($id);
+        if (!$board) return redirect('/boards');
 
-        $board = $id
-            ? Board::with('statuses.tasks.subtasks')->find($id)
-            : Board::with('statuses.tasks.subtasks')->first();
+        Gate::authorize('get-board', $board);
 
         return Inertia::render('Boards/Show', [
-            'board' => $board ?? $emptyBoard,
+            'board' => $board
         ]);
     }
 
@@ -54,7 +48,10 @@ class BoardController extends Controller
         ]);
 
         $board = DB::transaction(function () use ($validatedData) {
-            $board = Board::create(['name' => $validatedData['name']]);
+            $board = Board::create([
+                'name' => $validatedData['name'],
+                'user_id' => Auth::id(),
+            ]);
             $board->statuses()->createMany($validatedData['statuses'] ?? []);
             return $board;
         });
@@ -107,7 +104,11 @@ class BoardController extends Controller
 
     public function destroy($id)
     {
-        Board::destroy(($id));
+        $board = Board::findOrFail($id);
+
+        Gate::authorize('delete-board', $board);
+
+        $board->destroy($board['id']);
         return redirect('/boards');
     }
 }
